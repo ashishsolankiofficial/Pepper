@@ -6,9 +6,14 @@ from rest_framework.exceptions import AuthenticationFailed
 from users.serializers import UserSerializer
 from users.models import User
 from django.contrib.auth.hashers import make_password
+from rest_framework_simplejwt.views import TokenObtainPairView
+from users.serializers import MyTokenObtainPairSerializer
 
 
 # Create your views here.
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
 
 class RegisterView(APIView):
