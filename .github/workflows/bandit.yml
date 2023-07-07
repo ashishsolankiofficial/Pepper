@@ -1,0 +1,44 @@
+name: Bandit Scan
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  bandit_scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Create and activate virtual environment
+        run: |
+          python3 -m venv bandit-env
+          source bandit-env/bin/activate
+
+      - name: Install Bandit
+        run: pip install bandit
+
+      - name: Run Bandit Scan
+        run: bandit -f csv -r . -o bandit_results.csv || echo "::set-output name=ignore_failure::true"
+
+      - name: Display Directory Contents
+        run: |
+          pwd
+          ls
+
+      - name: Upload Bandit Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: Bandit Scan Results
+          path: bandit_results.csv
